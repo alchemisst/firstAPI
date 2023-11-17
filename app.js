@@ -6,7 +6,7 @@ const app = express()
 
 
 //Using BodyParser
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 //DB connect
@@ -30,17 +30,32 @@ const articleSchema = {
 const Article = mongoose.model("Article",articleSchema)
 
 
-
-app.get("/",function(req,res){
-    res.send("Hello")
+//Article Route
+app.get("/articles",function(req,res){
+    Article.find({}).then(function(result){
+        res.send(result)
+    })
 })
 
+//Article Post Route
+app.post("/articles",function(req,res){
+    const article = new Article({
+    title : req.body.title,
+    content : req.body.content
+    })
+    console.log(req.body.title)
+    console.log(req.body.content)
+    article.save().catch(function(err){
+        console.log(err)
+    })
+})
 
-
-
-
-
-
+app.delete('/articles',function(req,res){
+    
+    Article.deleteMany().catch(function(err){
+        console.log(err)
+    })
+})
 
 app.listen(3000,function(){
     console.log('Server Started')
